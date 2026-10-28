@@ -197,28 +197,26 @@ export default function AICopilotView({ currentUser, onDeductTokens, onNavigateT
                 type="button"
                 onClick={checkHealth}
                 title="Click to re-check backend connection"
-                className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-medium transition-colors cursor-pointer ${
-                  backendStatus === 'online'
+                className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-medium transition-colors cursor-pointer ${backendStatus === 'online'
                     ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20'
                     : backendStatus === 'offline'
-                    ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30 hover:bg-rose-500/20'
-                    : 'bg-white/10 text-white/50 border border-white/10'
-                }`}
+                      ? 'bg-rose-500/10 text-rose-400 border border-rose-500/30 hover:bg-rose-500/20'
+                      : 'bg-white/10 text-white/50 border border-white/10'
+                  }`}
               >
                 <span
-                  className={`w-1.5 h-1.5 rounded-full ${
-                    backendStatus === 'online'
+                  className={`w-1.5 h-1.5 rounded-full ${backendStatus === 'online'
                       ? 'bg-emerald-400 animate-pulse'
                       : backendStatus === 'offline'
-                      ? 'bg-rose-400'
-                      : 'bg-white/40'
-                  }`}
+                        ? 'bg-rose-400'
+                        : 'bg-white/40'
+                    }`}
                 />
                 {backendStatus === 'online'
                   ? `FastAPI Online (${backendInfo?.model || 'Gemini 3.1 Flash-Lite'}${backendInfo?.gemini_key_configured ? '' : ' • Demo Mode'})`
                   : backendStatus === 'offline'
-                  ? 'FastAPI Offline • Click to retry'
-                  : 'Checking AI Backend...'}
+                    ? 'FastAPI Offline • Click to retry'
+                    : 'Checking AI Backend...'}
               </button>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-white mt-1">
@@ -257,24 +255,22 @@ export default function AICopilotView({ currentUser, onDeductTokens, onNavigateT
                   className={`flex gap-3 ${isAssistant || isError ? 'items-start' : 'items-start flex-row-reverse'}`}
                 >
                   <div
-                    className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 text-xs font-bold ${
-                      isAssistant
+                    className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 text-xs font-bold ${isAssistant
                         ? 'bg-[#ff0c0c]/15 text-[#ff0c0c] border border-[#ff0c0c]/30'
                         : isError
-                        ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
-                        : 'bg-white/10 text-white border border-white/20'
-                    }`}
+                          ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+                          : 'bg-white/10 text-white border border-white/20'
+                      }`}
                   >
                     {isAssistant ? <Bot className="w-4 h-4" /> : isError ? <AlertCircle className="w-4 h-4" /> : <User className="w-4 h-4" />}
                   </div>
 
-                  <div className={`max-w-[85%] rounded-2xl p-4 text-sm leading-relaxed ${
-                    isAssistant
+                  <div className={`max-w-[85%] rounded-2xl p-4 text-sm leading-relaxed ${isAssistant
                       ? 'bg-white/[0.03] border border-white/10 text-white/90'
                       : isError
-                      ? 'bg-rose-950/30 border border-rose-800/40 text-rose-200'
-                      : 'bg-[#ff0c0c] text-white font-medium shadow-lg shadow-[#ff0c0c]/20'
-                  }`}>
+                        ? 'bg-rose-950/30 border border-rose-800/40 text-rose-200'
+                        : 'bg-[#ff0c0c] text-white font-medium shadow-lg shadow-[#ff0c0c]/20'
+                    }`}>
                     <div className="flex items-center justify-between gap-4 mb-1 text-[11px] opacity-60">
                       <span>{isAssistant ? 'Spidyy AI Copilot' : isError ? 'Error' : currentUser?.fullName || 'You'}</span>
                       <div className="flex items-center gap-2">
