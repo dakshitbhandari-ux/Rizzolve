@@ -1,0 +1,387 @@
+[
+  {
+    "id": "doubt-1793160781165",
+    "title": "what is machine learning ?",
+    "snippet": "tell me basics of machine learning ",
+    "fullDescription": "tell me basics of machine learning",
+    "subject": "Operating Systems",
+    "subjectCode": "CS-302",
+    "author": "Random 1",
+    "authorAvatar": "R1",
+    "authorBatch": "B.Tech Computer Science \u2022 Semester 4",
+    "authorId": "aarav.sharma@campus.edu",
+    "authorEmail": "aarav.sharma@campus.edu",
+    "upvotes": 2,
+    "upvotedBy": [
+      "aarav.sharma@campus.edu",
+      "bhandaridaksh07@gmail.com"
+    ],
+    "bounty": 25,
+    "time": "Just now",
+    "isResolved": true,
+    "acceptedAnswerId": "ans-1793163417160",
+    "tags": [
+      "Academic Doubt",
+      "Operating Systems"
+    ],
+    "answers": [
+      {
+        "id": "ans-1793161179548",
+        "author": "Random 10",
+        "authorAvatar": "R10",
+        "authorRole": "Computer Science & Engineering \u2022 Peer Contributor",
+        "time": "Just now",
+        "text": "machine learning is a superwised algo",
+        "upvotes": 0,
+        "userUpvoted": false,
+        "isAccepted": false
+      },
+      {
+        "id": "ans-1793163417160",
+        "author": "Random 14",
+        "authorAvatar": "R14",
+        "authorRole": "Computer Science & Engineering \u2022 Peer Contributor",
+        "time": "Just now",
+        "text": "learning from data",
+        "upvotes": 0,
+        "userUpvoted": false,
+        "isAccepted": true
+      }
+    ],
+    "communityId": "ml-ai",
+    "community": "Machine Learning & AI Lab"
+  },
+  {
+    "title": "[AI Review] Is this explanation for Red-Black tree deletion rotations accurate?",
+    "snippet": "[AI Verification Request] I generated this explanation using Spidyy AI...",
+    "fullDescription": "### \u2753 Original Question:\nProof for Red-Black tree insertion needing maximum 2 rotations while deletion may need 3?\n\n### \ud83e\udd16 Spidyy AI Proposed Solution:\n> Deletion may cause a double black node that requires up to 3 restructuring rotations in Case 2 and Case 4.\n\n### \ud83d\udd0d Verification Request by Student:\nCan someone verify if Case 2 actually takes 3 rotations or if it terminates in 2?",
+    "subject": "Data Structures",
+    "subjectCode": "CS-204",
+    "author": "Random 1",
+    "authorAvatar": "R1",
+    "authorBatch": "B.Tech CS \u2022 Sem 4",
+    "authorId": "aarav.sharma@campus.edu",
+    "authorEmail": "aarav.sharma@campus.edu",
+    "bounty": 25,
+    "tags": [
+      "AI-Verification",
+      "Peer-Review",
+      "Data Structures"
+    ],
+    "isAiVerification": true,
+    "id": "doubt-1793137423755",
+    "answers": [],
+    "upvotes": 1,
+    "upvotedBy": [
+      "aarav.sharma@campus.edu"
+    ],
+    "time": "Just now",
+    "isResolved": false,
+    "communityId": "comp-prog",
+    "community": "Competitive Programming Guild"
+  },
+  {
+    "id": "doubt-1793156461203",
+    "title": "how the pbl is connected",
+    "snippet": "what are the strugling points",
+    "fullDescription": "what are the strugling points",
+    "subject": "Operating Systems",
+    "subjectCode": "CS-302",
+    "author": "Random 1",
+    "authorAvatar": "R1",
+    "authorBatch": "B.Tech Computer Science \u2022 Semester 4",
+    "authorId": "aarav.sharma@campus.edu",
+    "authorEmail": "aarav.sharma@campus.edu",
+    "upvotes": 1,
+    "upvotedBy": [
+      "aarav.sharma@campus.edu"
+    ],
+    "bounty": 25,
+    "time": "Just now",
+    "isResolved": true,
+    "acceptedAnswerId": "ans-1793156519220",
+    "tags": [
+      "Academic Doubt",
+      "Operating Systems"
+    ],
+    "answers": [
+      {
+        "id": "ans-1793156519220",
+        "author": "Random 11",
+        "authorAvatar": "R11",
+        "authorRole": "Computer Science & Engineering \u2022 Peer Contributor",
+        "time": "Just now",
+        "text": "it is the too complicated process",
+        "upvotes": 0,
+        "userUpvoted": false,
+        "isAccepted": true
+      }
+    ],
+    "communityId": "apex-cs-2026",
+    "community": "Apex CS Class of 2026"
+  },
+  {
+    "id": "doubt-1793156201670",
+    "title": "who is my father",
+    "snippet": "who is my father please tell me",
+    "fullDescription": "who is my father please tell me",
+    "subject": "Operating Systems",
+    "subjectCode": "CS-302",
+    "author": "Random 1",
+    "authorAvatar": "R1",
+    "authorBatch": "B.Tech Computer Science \u2022 Semester 4",
+    "authorId": "aarav.sharma@campus.edu",
+    "authorEmail": "aarav.sharma@campus.edu",
+    "upvotes": 1,
+    "upvotedBy": [
+      "aarav.sharma@campus.edu"
+    ],
+    "bounty": 25,
+    "time": "Just now",
+    "isResolved": false,
+    "acceptedAnswerId": null,
+    "tags": [
+      "Academic Doubt",
+      "Operating Systems"
+    ],
+    "answers": [],
+    "communityId": "systems-os",
+    "community": "Systems & Architecture Circle"
+  },
+  {
+    "title": "How to implement Dijkstra with min-heap priority queue in C++?",
+    "snippet": "Struggling with priority_queue syntax for pairs of (distance, vertex)...",
+    "fullDescription": "In C++, std::priority_queue is a max-heap by default. How do we pass std::greater to make it a min-heap for shortest path traversal?",
+    "subject": "Data Structures",
+    "subjectCode": "CS-204",
+    "author": "Random 12",
+    "authorAvatar": "R12",
+    "authorBatch": "B.Tech CS \u2022 Sem 4",
+    "authorId": "alice@campus.edu",
+    "authorEmail": "alice@campus.edu",
+    "bounty": 35,
+    "tags": [
+      "Dijkstra",
+      "Graph",
+      "Priority Queue"
+    ],
+    "id": "doubt-1793136176176",
+    "answers": [
+      {
+        "author": "Random 13",
+        "authorAvatar": "R13",
+        "authorRole": "Peer Mentor \u2022 Senior Sem 6",
+        "text": "Use std::priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> pq; where pair is (dist, node).",
+        "id": "ans-1793136194136",
+        "time": "Just now",
+        "upvotes": 0,
+        "isAccepted": true
+      }
+    ],
+    "upvotes": 1,
+    "upvotedBy": [
+      "alice@campus.edu"
+    ],
+    "time": "Just now",
+    "isResolved": true,
+    "acceptedAnswerId": "ans-1793136194136",
+    "communityId": "apex-cs-2026",
+    "community": "Apex CS Class of 2026"
+  },
+  {
+    "id": "doubt-1",
+    "title": "How does Peterson\u2019s algorithm guarantee mutual exclusion without atomic hardware instructions (like TSL)?",
+    "snippet": "I am struggling to understand step 3 in Tanenbaum where turn and interested flags interact concurrently in memory. How can two threads not overwrite each other without hardware-level locks?",
+    "fullDescription": "In standard operating systems theory, Peterson's algorithm is presented as a pure software mutual exclusion solution for two processes.\n\nHowever, during concurrent execution:\n```c\nvoid enter_region(int process) {\n    int other = 1 - process;\n    interested[process] = TRUE;\n    turn = process;\n    while (turn == process && interested[other] == TRUE); // busy wait\n}\n```\n\nIf Process 0 and Process 1 both execute `turn = process` simultaneously, how does memory arbitration decide who waits without atomic CPU primitives? Does out-of-order execution in modern x86/ARM processors break this without memory barriers?",
+    "subject": "Operating Systems",
+    "subjectCode": "CS-302",
+    "author": "Random 7",
+    "authorAvatar": "R7",
+    "authorBatch": "B.Tech CS \u2022 Sem 4",
+    "authorId": "kavya.sharma@campus.edu",
+    "authorEmail": "kavya.sharma@campus.edu",
+    "upvotes": 42,
+    "upvotedBy": [],
+    "bounty": 30,
+    "time": "18m ago",
+    "isResolved": true,
+    "acceptedAnswerId": "ans-1",
+    "tags": [
+      "Concurrency",
+      "Critical Section",
+      "Memory Barriers"
+    ],
+    "answers": [
+      {
+        "id": "ans-1",
+        "author": "Random 2",
+        "authorAvatar": "R2",
+        "authorRole": "Peer Mentor \u2022 Senior Sem 6",
+        "time": "12m ago",
+        "text": "Great question! You've touched on two crucial aspects: **algorithmic correctness on a sequential memory model** versus **hardware reality on modern multi-core processors**.\n\n1. **Theoretical Correctness (Sequential Consistency)**:\nAt the bus level, memory writes to the shared integer `turn` are serialized by the memory controller bus arbiter. Even if both cores write at roughly the same clock cycle, one write will hit the cache line last. Whichever process writes last overwrites `turn` with its own ID, which causes that process to be trapped in the `while` loop while the other proceeds.\n\n2. **Modern Multi-Core Reality**:\nOn modern x86 or ARM CPUs with out-of-order execution and store buffers, stores can be reordered after loads unless you issue a memory fence (`mfence` or `std::atomic_thread_fence`). So in modern C++, Peterson's requires sequentially consistent atomic flags to prevent compiler and CPU reordering.",
+        "upvotes": 28,
+        "isAccepted": true,
+        "reports": [],
+        "isReported": true,
+        "reportCount": 1
+      },
+      {
+        "id": "ans-2",
+        "author": "Prof. Rajesh Nair",
+        "authorAvatar": "PR",
+        "authorRole": "Faculty \u2022 OS Department",
+        "time": "5m ago",
+        "text": "Priya's explanation is spot on. For your mid-term exam questions, Peterson's algorithm is assumed to run on an idealized system with sequential consistency. Keep in mind that for N processes, Peterson's generalizes to Lamport's Bakery Algorithm.",
+        "upvotes": 14,
+        "isAccepted": false
+      }
+    ],
+    "communityId": "systems-os",
+    "community": "Systems & Architecture Circle"
+  },
+  {
+    "id": "doubt-2",
+    "title": "Intuitive geometric explanation for why SVD eigenvectors are orthogonal in A^T A and A A^T",
+    "snippet": "When mapping an n-dimensional sphere into an ellipsoid, why do the principal axes preserve orthogonality under linear transformations?",
+    "fullDescription": "We know that Singular Value Decomposition factors an m x n matrix into U \u03a3 V^T.\n\nThe columns of V are eigenvectors of A^T A, and columns of U are eigenvectors of A A^T.\n\nCould someone provide a geometric breakdown of:\n1. Why eigenvectors of a symmetric matrix are always mutually perpendicular.\n2. How the unit sphere maps to an hyper-ellipsoid along the singular values \u03c3_i.",
+    "subject": "Applied Mathematics",
+    "subjectCode": "MA-201",
+    "author": "Random 1",
+    "authorAvatar": "R1",
+    "authorBatch": "B.Tech CS \u2022 Sem 4",
+    "authorId": "aarav.sharma@campus.edu",
+    "authorEmail": "aarav.sharma@campus.edu",
+    "upvotes": 38,
+    "upvotedBy": [],
+    "bounty": 45,
+    "time": "42m ago",
+    "isResolved": false,
+    "acceptedAnswerId": null,
+    "tags": [
+      "Linear Algebra",
+      "SVD",
+      "Eigenvectors",
+      "Orthogonality"
+    ],
+    "answers": [
+      {
+        "id": "ans-3",
+        "author": "Random 3",
+        "authorAvatar": "R3",
+        "authorRole": "Math Guild Lead \u2022 Sem 5",
+        "time": "25m ago",
+        "text": "Consider the Spectral Theorem for symmetric matrices: because A^T A is symmetric ($(A^T A)^T = A^T A$), its eigenvalues are guaranteed real and its eigenvectors can always be chosen orthonormal.\n\nGeometrically:\n- Start with the unit sphere ||x|| = 1.\n- The transformation y = Ax stretches this sphere into an ellipsoid.\n- The longest axis of this ellipsoid corresponds to the direction v_1 that maximizes ||Av||.\n- Because the principal axes of any ellipsoid are orthogonal by definition in Euclidean space, the resulting singular vectors form orthogonal coordinate systems before and after transformation!",
+        "upvotes": 19,
+        "isAccepted": false
+      }
+    ],
+    "communityId": "ml-ai",
+    "community": "Machine Learning & AI Lab"
+  },
+  {
+    "id": "doubt-3",
+    "title": "Difference between TCP CUBIC and BBR congestion control in high-latency satellite/wireless links",
+    "snippet": "Loss-based vs bottleneck bandwidth estimation: why does packet loss unfairly penalize CUBIC when RTT is high, and how does BBR maintain pacing?",
+    "fullDescription": "In our Computer Networks lab on Wireshark analysis:\nWhen packet loss occurs due to radio interference (not actual buffer saturation):\n- TCP Reno/CUBIC halves its congestion window (cwnd), causing throughput to plummet on a 600ms latency connection.\n- Google BBR seems to maintain steady pacing.\n\nHow does BBR decouple packet loss from network congestion?",
+    "subject": "Computer Networks",
+    "subjectCode": "CS-301",
+    "author": "Random 4",
+    "authorAvatar": "R4",
+    "authorBatch": "B.Tech CS \u2022 Sem 4",
+    "authorId": "rohan.patel@campus.edu",
+    "authorEmail": "rohan.patel@campus.edu",
+    "upvotes": 29,
+    "upvotedBy": [],
+    "bounty": 20,
+    "time": "1h ago",
+    "isResolved": true,
+    "acceptedAnswerId": "ans-4",
+    "tags": [
+      "Networking",
+      "TCP CUBIC",
+      "BBR",
+      "Congestion Control"
+    ],
+    "answers": [
+      {
+        "id": "ans-4",
+        "author": "Random 9",
+        "authorAvatar": "R9",
+        "authorRole": "Teaching Assistant \u2022 Networks",
+        "time": "35m ago",
+        "text": "CUBIC is a **loss-based** algorithm. It assumes every packet drop is caused by router buffer overflow (congestion). On high-latency wireless or satellite links, transient radio noise drops packets even when buffers are completely empty, crippling CUBIC's window.\n\nBBR (Bottleneck Bandwidth and Round-trip propagation time) is **model-based**. It continuously measures:\n1. Maximum Delivery Rate (Bottleneck Bandwidth)\n2. Minimum Round Trip Time (RTprop)\n\nBBR paces packets at exactly the bottleneck bandwidth without filling the queue, ignoring random non-congestion packet loss until delivery rate genuinely drops.",
+        "upvotes": 22,
+        "isAccepted": true
+      }
+    ],
+    "communityId": "systems-os",
+    "community": "Systems & Architecture Circle"
+  },
+  {
+    "id": "doubt-4",
+    "title": "Proof for Red-Black tree insertion needing maximum 2 rotations while deletion may need 3",
+    "snippet": "Can someone provide a concise invariant breakdown for recoloring cases vs rotation restructuring during insertion?",
+    "fullDescription": "In Cormen (CLRS) Chapter 13:\nDuring RB-tree insertion, we have Cases 1, 2, and 3:\n- Case 1 (Uncle is red) is recoloring and moves up the tree.\n- Case 2 (Uncle black, zig-zag) converts to Case 3 via 1 rotation.\n- Case 3 (Uncle black, straight) performs 1 rotation and terminates.\n\nHence insertion needs at most 2 rotations. But why can deletion propagate rotations up to 3 times?",
+    "subject": "Data Structures",
+    "subjectCode": "CS-204",
+    "author": "Random 5",
+    "authorAvatar": "R5",
+    "authorBatch": "B.Tech CS \u2022 Sem 4",
+    "authorId": "ankit.verma@campus.edu",
+    "authorEmail": "ankit.verma@campus.edu",
+    "upvotes": 23,
+    "upvotedBy": [],
+    "bounty": 50,
+    "time": "3h ago",
+    "isResolved": false,
+    "acceptedAnswerId": null,
+    "tags": [
+      "Trees",
+      "Red-Black Trees",
+      "Rotations",
+      "Algorithms"
+    ],
+    "answers": [],
+    "communityId": "comp-prog",
+    "community": "Competitive Programming Guild"
+  },
+  {
+    "id": "doubt-5",
+    "title": "Why is Boyce-Codd Normal Form (BCNF) strictly stronger than 3NF, and what dependency loss can occur?",
+    "snippet": "Looking for a clean real-world college database example showing Functional Dependency preservation failure during BCNF decomposition...",
+    "fullDescription": "A relation is in 3NF if for every non-trivial X -> Y, either X is a superkey OR Y is a prime attribute.\nIn BCNF, every determinant X MUST be a superkey without exception.\n\nCould someone show a concrete relation schema (e.g., Student, Course, Advisor) where decomposing to BCNF eliminates a transitive dependency but loses dependency preservation?",
+    "subject": "Database Management",
+    "subjectCode": "CS-304",
+    "author": "Random 6",
+    "authorAvatar": "R6",
+    "authorBatch": "B.Tech CS \u2022 Sem 4",
+    "authorId": "sneha.rao@campus.edu",
+    "authorEmail": "sneha.rao@campus.edu",
+    "upvotes": 19,
+    "upvotedBy": [],
+    "bounty": 25,
+    "time": "4h ago",
+    "isResolved": true,
+    "acceptedAnswerId": "ans-5",
+    "tags": [
+      "Databases",
+      "Normalization",
+      "3NF",
+      "BCNF"
+    ],
+    "answers": [
+      {
+        "id": "ans-5",
+        "author": "Random 1",
+        "authorAvatar": "R1",
+        "authorRole": "Peer Mentor",
+        "time": "3h ago",
+        "text": "Here is the classic textbook counter-example:\n\nConsider **Enrollment(StudentID, Subject, Advisor)** with constraints:\n1. For each student and subject, there is exactly one advisor: `(StudentID, Subject) -> Advisor`\n2. Each advisor advises only one subject: `Advisor -> Subject`\n\nCandidate Keys: `(StudentID, Subject)` and `(StudentID, Advisor)`.\nThis is in 3NF because in `Advisor -> Subject`, `Subject` is part of candidate key (prime attribute).\n\nHowever, in BCNF, `Advisor -> Subject` violates the rule because `Advisor` is not a superkey.\nDecomposing into:\n- R1: `(Advisor, Subject)`\n- R2: `(StudentID, Advisor)`\nBoth are in BCNF, but we can no longer check `(StudentID, Subject) -> Advisor` without performing an expensive join across R1 and R2! Hence dependency preservation is lost.",
+        "upvotes": 18,
+        "isAccepted": true
+      }
+    ],
+    "communityId": "gate-prep",
+    "community": "GATE & Higher Studies Prep"
+  }
+]

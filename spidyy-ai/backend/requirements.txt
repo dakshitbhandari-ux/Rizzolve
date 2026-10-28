@@ -1,0 +1,12 @@
+fastapi>=0.115
+uvicorn[standard]>=0.30
+pydantic>=2.12
+google-genai>=1.0
+python-dotenv>=1.0
+# Semantic question grouping (similarity.py). Pulls in PyTorch (CPU) and, on first use,
+# downloads the all-MiniLM-L6-v2 model (~90 MB) from Hugging Face.
+sentence-transformers>=3.0
+numpy>=1.26
+# Phase 2: question groups and counts in PostgreSQL (database.py, models.py, question_store.py).
+sqlalchemy>=2.0
+psycopg[binary]>=3.2

@@ -1,0 +1,42 @@
+{
+  "name": "doubt-chain-backend",
+  "version": "1.0.0",
+  "description": "Supabase & Postgres serverless backend infrastructure for Doubt Chain B2B SaaS",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/start-all.js",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:backend": "cd spidyy-ai/backend && ./.venv/bin/uvicorn main:app --reload --host 127.0.0.1 --port 8000",
+    "build:frontend": "npm --prefix frontend run build",
+    "build": "tsc",
+    "test:conn": "tsx scripts/test-connection.ts",
+    "db:link": "supabase link",
+    "db:push": "supabase db push",
+    "db:pull": "supabase db pull",
+    "db:types": "supabase gen types typescript --local > lib/database.types.ts",
+    "db:start": "supabase start",
+    "db:stop": "supabase stop",
+    "db:status": "supabase status",
+    "db:reset": "supabase db reset"
+  },
+  "keywords": [
+    "supabase",
+    "postgresql",
+    "doubt-chain",
+    "rls",
+    "multi-tenant",
+    "saas"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.1",
+    "dotenv": "^18.0.9"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4",
+    "supabase": "^2.15.8",
+    "tsx": "^4.23.15",
+    "typescript": "^5.7.3"
+  }
+}

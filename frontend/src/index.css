@@ -1,0 +1,219 @@
+@import "tailwindcss";
+
+@theme {
+  --color-spidey-bg: #050510;
+  --color-spidey-red: #E23636;
+  --color-spidey-red-glow: #ff2a2a;
+  --color-spidey-blue: #0033CC;
+  --color-spidey-blue-glow: #0066FF;
+  --color-spidey-dark: #0a0c1e;
+  --color-spidey-card: #0c0e24;
+  --font-hero: 'Bebas Neue', 'Anton', sans-serif;
+  --font-display: 'Anton', 'Bebas Neue', sans-serif;
+  --font-oswald: 'Oswald', sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+:root {
+  --background: #050510;
+  --primary: #E23636;
+  --secondary: #0033CC;
+  --accent: #0066FF;
+  --text: #fef9f8;
+}
+
+body {
+  background-color: #050510;
+  color: #fef9f8;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+/* Comic halftone dot texture */
+.bg-comic-dots {
+  background-image: radial-gradient(rgba(226, 54, 54, 0.12) 1.5px, transparent 1.5px),
+                    radial-gradient(rgba(0, 51, 204, 0.1) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+  background-position: 0 0, 12px 12px;
+}
+
+/* City grid perspective */
+.bg-city-grid {
+  background-image: linear-gradient(to right, rgba(0, 102, 255, 0.05) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(226, 54, 54, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Spider-Sense pulse keyframe */
+@keyframes spidey-sense-pulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+    filter: drop-shadow(0 0 10px #E23636);
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 1;
+    filter: drop-shadow(0 0 25px #FFE600);
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.8;
+    filter: drop-shadow(0 0 10px #E23636);
+  }
+}
+
+.animate-spidey-sense {
+  animation: spidey-sense-pulse 2s infinite ease-in-out;
+}
+
+/* Multiverse Chromatic Glitch effect */
+.glitch-text {
+  position: relative;
+  text-shadow: 2.5px 0 #E23636, -2.5px 0 #0066FF;
+  transition: all 0.2s ease;
+}
+
+.glitch-text:hover {
+  text-shadow: 4px 0 #E23636, -4px 0 #0066FF, 0 0 20px rgba(226, 54, 54, 0.8);
+}
+
+/* Comic Action Sticker Angle Cut */
+.comic-panel {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+}
+
+.comic-panel-reverse {
+  clip-path: polygon(15px 0, 100% 0, 100% 100%, 0 100%, 0 15px);
+}
+
+/* Dynamic Web Line Draw animation */
+@keyframes drawWeb {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.web-line {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: drawWeb 2.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Neon Red & Blue Glows */
+.glow-spidey-red {
+  box-shadow: 0 0 30px -5px rgba(226, 54, 54, 0.5);
+}
+
+.glow-spidey-blue {
+  box-shadow: 0 0 30px -5px rgba(0, 102, 255, 0.5);
+}
+
+/* Glassmorphism Bento Card */
+.spidey-glass {
+  background: rgba(10, 11, 26, 0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.spidey-glass:hover {
+  border-color: #E23636;
+  box-shadow: 0 0 35px rgba(226, 54, 54, 0.35), inset 0 0 20px rgba(226, 54, 54, 0.05);
+  transform: translateY(-4px);
+}
+
+/* ========================================================
+   Advanced Immersive Fluid Background & Noise Keyframes
+   ======================================================== */
+
+@keyframes fluid-blob-1 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1) rotate(0deg);
+  }
+  25% {
+    transform: translate(140px, -90px) scale(1.18) rotate(35deg);
+  }
+  50% {
+    transform: translate(80px, 120px) scale(0.92) rotate(90deg);
+  }
+  75% {
+    transform: translate(-110px, 60px) scale(1.12) rotate(160deg);
+  }
+}
+
+@keyframes fluid-blob-2 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1) rotate(0deg);
+  }
+  30% {
+    transform: translate(-160px, 80px) scale(1.22) rotate(-45deg);
+  }
+  60% {
+    transform: translate(120px, -110px) scale(0.88) rotate(-110deg);
+  }
+  85% {
+    transform: translate(-60px, -60px) scale(1.05) rotate(-180deg);
+  }
+}
+
+@keyframes fluid-blob-3 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  40% {
+    transform: translate(90px, 140px) scale(1.25);
+  }
+  75% {
+    transform: translate(-120px, -80px) scale(0.95);
+  }
+}
+
+@keyframes fluid-blob-4 {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1) rotate(0deg);
+  }
+  50% {
+    transform: translate(-100px, 110px) scale(1.15) rotate(45deg);
+  }
+}
+
+.animate-fluid-blob-1 {
+  animation: fluid-blob-1 22s infinite ease-in-out;
+}
+
+.animate-fluid-blob-2 {
+  animation: fluid-blob-2 26s infinite ease-in-out;
+}
+
+.animate-fluid-blob-3 {
+  animation: fluid-blob-3 18s infinite ease-in-out;
+}
+
+.animate-fluid-blob-4 {
+  animation: fluid-blob-4 28s infinite ease-in-out;
+}
+
+/* Subtle Film Grain Noise Texture */
+.bg-noise-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.06'/%3E%3C/svg%3E");
+}
+
+/* Universal Glassmorphic UI utilities */
+.glass-panel {
+  background: rgba(8, 7, 18, 0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
