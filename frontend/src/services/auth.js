@@ -6,16 +6,19 @@ export const isAuthConfigured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY)
 
 function getStoredSession() {
   try {
-    return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null')
+    return JSON.parse(localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY) || 'null')
   } catch {
     return null
   }
 }
 
-function saveSession(session) {
+function saveSession(session, rememberMe = true) {
   if (!session?.access_token) return
   const expiresAt = session.expires_at || Math.floor(Date.now() / 1000) + (session.expires_in || 3600)
-  localStorage.setItem(SESSION_KEY, JSON.stringify({
+  const storage = rememberMe ? localStorage : sessionStorage
+  const otherStorage = rememberMe ? sessionStorage : localStorage
+  otherStorage.removeItem(SESSION_KEY)
+  storage.setItem(SESSION_KEY, JSON.stringify({
     access_token: session.access_token,
     refresh_token: session.refresh_token,
     expires_at: expiresAt,
@@ -24,6 +27,7 @@ function saveSession(session) {
 
 function clearSession() {
   localStorage.removeItem(SESSION_KEY)
+  sessionStorage.removeItem(SESSION_KEY)
 }
 
 function authError(payload, status) {
@@ -81,11 +85,11 @@ async function fetchCurrentUser(accessToken) {
   return toAppUser(user)
 }
 
-export async function signInWithEmail(email, password) {
+export async function signInWithEmail(email, password, rememberMe = true) {
   const result = await authRequest('token?grant_type=password', {
     body: { email: email.trim().toLowerCase(), password },
   })
-  saveSession(result)
+  saveSession(result, rememberMe)
   const user = result.user || await fetchCurrentUser(result.access_token)
   return toAppUser(user)
 }
