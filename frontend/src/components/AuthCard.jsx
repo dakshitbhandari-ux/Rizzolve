@@ -69,7 +69,7 @@ export default function AuthCard({ onAuthSuccess, onOpenForgotPassword, onNotify
     if (!loginEmail.trim() || !loginPassword) { setErrorMsg('Enter your college email and password.'); return }
     setIsLoading(true)
     try {
-      const user = await signInWithEmail(loginEmail, loginPassword)
+      const user = await signInWithEmail(loginEmail, loginPassword, rememberMe)
       onNotify({ type: 'success', title: 'Welcome Back', message: 'Signed in as ' + user.fullName + '.' })
       onAuthSuccess(user)
     } catch (error) {
