@@ -89,7 +89,6 @@ export default function App() {
             onClose={() => setIsPasswordRecovery(false)}
             onPasswordUpdated={() => setIsPasswordRecovery(false)}
             onNotify={setToast}
-            showResendConfirmation={showResendConfirmation}
           />
         </div>
       </div>
@@ -111,6 +110,7 @@ export default function App() {
             onAuthSuccess={handleAuthSuccess}
             onOpenForgotPassword={() => setIsForgotModalOpen(true)}
             onNotify={setToast}
+            showResendConfirmation={showResendConfirmation}
           />
         </div>
       </div>
