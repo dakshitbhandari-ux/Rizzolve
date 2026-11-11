@@ -64,25 +64,46 @@ async function authRequest(path, { method = 'POST', body, accessToken } = {}) {
   return payload
 }
 
-function toAppUser(user) {
+async function fetchUserProfile(accessToken, userId) {
+  try {
+    const query = new URLSearchParams({
+      select: 'name,email,student_id,course,semester,reputation',
+      id: 'eq.' + userId,
+    })
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/profiles?${query.toString()}`, {
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    if (!response.ok) return null
+    const rows = await response.json().catch(() => [])
+    return Array.isArray(rows) ? rows[0] || null : null
+  } catch {
+    return null
+  }
+}
+
+function toAppUser(user, profile) {
   if (!user) return null
   const metadata = user.user_metadata || {}
-  const fullName = metadata.full_name || metadata.name || user.email?.split('@')[0] || 'Student'
+  const fullName = profile?.name || metadata.full_name || metadata.name || user.email?.split('@')[0] || 'Student'
   return {
     id: user.id,
     fullName,
-    email: user.email || '',
-    studentId: metadata.student_id || '',
-    course: metadata.course || 'Not specified',
-    semester: metadata.semester || 'Not specified',
-    tokenBalance: 50,
+    email: user.email || profile?.email || '',
+    studentId: profile?.student_id || metadata.student_id || '',
+    course: profile?.course || metadata.course || 'Not specified',
+    semester: profile?.semester || metadata.semester || 'Not specified',
+    tokenBalance: Number(profile?.reputation ?? 0),
     role: 'student',
   }
 }
 
 async function fetchCurrentUser(accessToken) {
   const user = await authRequest('user', { method: 'GET', accessToken })
-  return toAppUser(user)
+  const profile = await fetchUserProfile(accessToken, user.id)
+  return toAppUser(user, profile)
 }
 
 export async function signInWithEmail(email, password, rememberMe = true) {
@@ -90,8 +111,7 @@ export async function signInWithEmail(email, password, rememberMe = true) {
     body: { email: email.trim().toLowerCase(), password },
   })
   saveSession(result, rememberMe)
-  const user = result.user || await fetchCurrentUser(result.access_token)
-  return toAppUser(user)
+  return await fetchCurrentUser(result.access_token)
 }
 
 export async function signUpWithEmail({ fullName, email, studentId, course, semester, password }) {
@@ -110,8 +130,8 @@ export async function signUpWithEmail({ fullName, email, studentId, course, seme
 
   if (result.access_token) {
     saveSession(result)
-    const user = result.user || await fetchCurrentUser(result.access_token)
-    return { user: toAppUser(user), confirmationRequired: false }
+    const user = await fetchCurrentUser(result.access_token)
+    return { user, confirmationRequired: false }
   }
 
   return { user: null, confirmationRequired: true }
