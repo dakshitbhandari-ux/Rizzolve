@@ -13,6 +13,7 @@ export default function App() {
   const [isPasswordRecovery, setIsPasswordRecovery] = useState(false)
   const [toast, setToast] = useState(null)
   const [isForgotModalOpen, setIsForgotModalOpen] = useState(false)
+  const [showResendConfirmation, setShowResendConfirmation] = useState(false)
 
   useEffect(() => {
     let active = true
@@ -22,7 +23,10 @@ export default function App() {
         setCurrentUser(user)
         if (user) setHasCompletedEntry(true)
         setIsPasswordRecovery(Boolean(recovery))
-        if (authError) setToast({ type: 'error', title: 'Email Link Expired', message: authError })
+        if (authError) {
+          setToast({ type: 'error', title: 'Email Link Expired', message: authError })
+          setShowResendConfirmation(true)
+        }
       })
       .catch((error) => {
         if (active) {
@@ -85,6 +89,7 @@ export default function App() {
             onClose={() => setIsPasswordRecovery(false)}
             onPasswordUpdated={() => setIsPasswordRecovery(false)}
             onNotify={setToast}
+            showResendConfirmation={showResendConfirmation}
           />
         </div>
       </div>
