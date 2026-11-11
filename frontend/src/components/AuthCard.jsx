@@ -15,7 +15,7 @@ import {
   HelpCircle,
 } from 'lucide-react'
 import confetti from 'canvas-confetti'
-import { anonymizeName } from '../utils/anonymize'
+import { signInWithEmail, signUpWithEmail } from '../services/auth'
 
 export default function AuthCard({ onAuthSuccess, onOpenForgotPassword, onNotify }) {
   // 'login' or 'register'
@@ -62,138 +62,48 @@ export default function AuthCard({ onAuthSuccess, onOpenForgotPassword, onNotify
   const passStrength = calculatePasswordStrength(regPassword)
   const passwordsMatch = regPassword.length > 0 && regPassword === regConfirmPassword
 
-  // Demo Credentials Fill
-  const fillDemoAccount = (role) => {
-    if (role === 'student') {
-      setLoginEmail('random1@campus.edu')
-      setLoginPassword('CampusStudent#2024')
-      onNotify({
-        type: 'info',
-        title: 'Demo Loaded: Student',
-        message: 'Credentials filled for Random 1 (B.Tech CS, Sem 4).',
-      })
-    } else {
-      setLoginEmail('random2@campus.edu')
-      setLoginPassword('PeerMentor#2024')
-      onNotify({
-        type: 'info',
-        title: 'Demo Loaded: Peer Mentor',
-        message: 'Credentials filled for Random 2 (Senior Mentor, Sem 6).',
-      })
-    }
-    setErrorMsg('')
-  }
-
-  // Handle Login
-  const handleLoginSubmit = (e) => {
+  // Authenticate against Supabase Auth. Passwords are never stored by the frontend.
+  const handleLoginSubmit = async (e) => {
     e.preventDefault()
     setErrorMsg('')
-
-    if (!loginEmail || !loginPassword) {
-      setErrorMsg('Please enter both your college email and password.')
-      return
-    }
-
-    if (!loginEmail.includes('@')) {
-      setErrorMsg('Please enter a valid academic email address.')
-      return
-    }
-
+    if (!loginEmail.trim() || !loginPassword) { setErrorMsg('Enter your college email and password.'); return }
     setIsLoading(true)
+    try {
+      const user = await signInWithEmail(loginEmail, loginPassword)
+      onNotify({ type: 'success', title: 'Welcome Back', message: 'Signed in as ' + user.fullName + '.' })
+      onAuthSuccess(user)
+    } catch (error) {
+      setErrorMsg(error.message || 'Unable to sign in. Please try again.')
+    } finally { setIsLoading(false) }
+  }
 
-    setTimeout(() => {
-      setIsLoading(false)
-      // Trigger subtle celebration confetti
-      try {
-        confetti({
-          particleCount: 50,
-          spread: 60,
-          origin: { y: 0.7 },
-          colors: ['#ff0c0c', '#ff0101', '#ffffff'],
-        })
-      } catch (err) {
-        // ignore if canvas not supported
+  // Create an individual Supabase Auth account and student profile.
+  const handleRegisterSubmit = async (e) => {
+    e.preventDefault()
+    setErrorMsg('')
+    if (!regFullName.trim() || !regEmail.trim() || !regStudentId.trim() || !regPassword || !regConfirmPassword) { setErrorMsg('All registration fields are required.'); return }
+    if (!regEmail.includes('@')) { setErrorMsg('Enter a valid college email address.'); return }
+    if (regStudentId.trim().length < 3) { setErrorMsg('Enter a valid student ID or roll number.'); return }
+    if (regPassword.length < 8) { setErrorMsg('Password must contain at least 8 characters.'); return }
+    if (regPassword !== regConfirmPassword) { setErrorMsg('Passwords do not match. Please verify both fields.'); return }
+    if (!agreedHonorCode) { setErrorMsg('Please agree to the Academic Integrity & Honor Code.'); return }
+    setIsLoading(true)
+    try {
+      const result = await signUpWithEmail({ fullName: regFullName, email: regEmail, studentId: regStudentId, course: regCourse, semester: regSemester, password: regPassword })
+      if (result.confirmationRequired) {
+        setAuthMode('login')
+        setLoginEmail(regEmail.trim())
+        setLoginPassword('')
+        onNotify({ type: 'success', title: 'Verify Your Email', message: 'Your account was created. Open the confirmation link sent to your email, then sign in.' })
+        return
       }
-
-      onNotify({
-        type: 'success',
-        title: 'Authentication Successful',
-        message: `Welcome back! Connected to campus workspace.`,
-      })
-
-      onAuthSuccess({
-        fullName: anonymizeName(loginEmail.split('@')[0].replace('.', ' ')),
-        email: loginEmail,
-        studentId: '2024-CAMPUS-789',
-        course: 'Computer Science & Engineering',
-        semester: 'Semester 4',
-        tokenBalance: 240,
-        role: 'student',
-      })
-    }, 900)
+      try { confetti({ particleCount: 80, spread: 75, origin: { y: 0.6 }, colors: ['#ff0c0c', '#ffffff', '#ff0101'] }) } catch {}
+      onNotify({ type: 'success', title: 'Account Created', message: 'Your individual Rizzolve account is ready. Welcome bonus: 50 tokens.' })
+      onAuthSuccess(result.user)
+    } catch (error) {
+      setErrorMsg(error.message || 'Unable to create your account. Please try again.')
+    } finally { setIsLoading(false) }
   }
-
-  // Handle Register
-  const handleRegisterSubmit = (e) => {
-    e.preventDefault()
-    setErrorMsg('')
-
-    if (!regFullName || !regEmail || !regStudentId || !regPassword || !regConfirmPassword) {
-      setErrorMsg('All registration fields are required.')
-      return
-    }
-
-    if (!regEmail.includes('@')) {
-      setErrorMsg('Please enter a valid college email.')
-      return
-    }
-
-    if (regPassword.length < 6) {
-      setErrorMsg('Password should be at least 6 characters.')
-      return
-    }
-
-    if (regPassword !== regConfirmPassword) {
-      setErrorMsg('Passwords do not match. Please verify both fields.')
-      return
-    }
-
-    if (!agreedHonorCode) {
-      setErrorMsg('Please agree to the Academic Integrity & Honor Code.')
-      return
-    }
-
-    setIsLoading(true)
-
-    setTimeout(() => {
-      setIsLoading(false)
-      try {
-        confetti({
-          particleCount: 80,
-          spread: 75,
-          origin: { y: 0.6 },
-          colors: ['#ff0c0c', '#ffffff', '#ff0101'],
-        })
-      } catch (err) {}
-
-      onNotify({
-        type: 'success',
-        title: 'Account Created & Verified',
-        message: 'Welcome bonus of +50 tokens credited to your wallet!',
-      })
-
-      onAuthSuccess({
-        fullName: anonymizeName(regFullName),
-        email: regEmail,
-        studentId: regStudentId,
-        course: regCourse,
-        semester: regSemester,
-        tokenBalance: 50, // Welcome bonus
-        role: 'student',
-      })
-    }, 1100)
-  }
-
   return (
     <div className="w-full max-w-xl mx-auto">
       {/* Outer Card with subtle dark border and restrained red glow */}
@@ -209,27 +119,7 @@ export default function AuthCard({ onAuthSuccess, onOpenForgotPassword, onNotify
               <span>Campus Portal</span>
             </span>
 
-            {/* Micro Demo Trigger for Evaluator Convenience */}
-            {authMode === 'login' && (
-              <div className="flex items-center gap-1 text-[11px] text-white/50">
-                <span>Quick demo:</span>
-                <button
-                  type="button"
-                  onClick={() => fillDemoAccount('student')}
-                  className="text-white/80 hover:text-[#ff0c0c] transition-colors underline cursor-pointer"
-                >
-                  Student
-                </button>
-                <span>•</span>
-                <button
-                  type="button"
-                  onClick={() => fillDemoAccount('mentor')}
-                  className="text-white/80 hover:text-[#ff0c0c] transition-colors underline cursor-pointer"
-                >
-                  Mentor
-                </button>
-              </div>
-            )}
+            <span className="text-[11px] text-white/40">Individual student accounts</span>
           </div>
 
           <h2 className="text-2xl sm:text-[2rem] font-bold text-white tracking-tight">
@@ -351,9 +241,9 @@ export default function AuthCard({ onAuthSuccess, onOpenForgotPassword, onNotify
                   onChange={(e) => setRememberMe(e.target.checked)}
                   className="w-4 h-4 rounded border-white/20 bg-white/5 text-[#ff0c0c] focus:ring-[#ff0c0c] focus:ring-offset-0 cursor-pointer accent-[#ff0c0c]"
                 />
-                <span>Remember this device</span>
+                <span>Keep me signed in on this device</span>
               </label>
-              <span className="text-[11px] text-white/40">Secure 256-bit session</span>
+              <span className="text-[11px] text-white/40">Encrypted account session</span>
             </div>
 
             {/* Primary Action Button: --secondary (#ff0c0c) with smooth hover and glow */}
@@ -502,7 +392,7 @@ export default function AuthCard({ onAuthSuccess, onOpenForgotPassword, onNotify
                   required
                   value={regPassword}
                   onChange={(e) => setRegPassword(e.target.value)}
-                  placeholder="At least 6 characters"
+                  placeholder="At least 8 characters"
                   className="w-full pl-10 pr-11 py-2 text-sm rounded-xl rizzolve-input"
                   autoComplete="new-password"
                 />
