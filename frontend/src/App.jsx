@@ -1,100 +1,122 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import CinematicEntryVideo from './components/entry/CinematicEntryVideo'
 import DashboardShell from './components/dashboard/DashboardShell'
 import AuthCard from './components/AuthCard'
 import ForgotPasswordModal from './components/ForgotPasswordModal'
 import NotificationToast from './components/NotificationToast'
+import { restoreAuthSession, signOut as signOutAccount } from './services/auth'
 
 export default function App() {
-  // Entry video plays when opening the website, then immediately switches to Dashboard
   const [hasCompletedEntry, setHasCompletedEntry] = useState(false)
-
-  // Authenticated Student State (Default student profile for instant seamless access)
-  const [currentUser, setCurrentUser] = useState({
-    fullName: 'Random 1',
-    email: 'random1@campus.edu',
-    studentId: '2024-CS-0412',
-    course: 'B.Tech Computer Science',
-    semester: 'Semester 4',
-    tokenBalance: 450,
-    role: 'student',
-  })
-
+  const [currentUser, setCurrentUser] = useState(null)
+  const [authReady, setAuthReady] = useState(false)
+  const [isPasswordRecovery, setIsPasswordRecovery] = useState(false)
   const [toast, setToast] = useState(null)
   const [isForgotModalOpen, setIsForgotModalOpen] = useState(false)
 
-  // When entry video completes, immediately switch into Dashboard
-  const handleEntryComplete = () => {
-    setHasCompletedEntry(true)
-  }
+  useEffect(() => {
+    let active = true
+    restoreAuthSession()
+      .then(({ user, recovery }) => {
+        if (!active) return
+        setCurrentUser(user)
+        setIsPasswordRecovery(Boolean(recovery))
+      })
+      .catch((error) => {
+        if (active) {
+          setToast({ type: 'error', title: 'Session Check Failed', message: error.message })
+        }
+      })
+      .finally(() => {
+        if (active) setAuthReady(true)
+      })
+    return () => { active = false }
+  }, [])
 
-  // Replay intro video on demand
-  const handleReplayIntro = () => {
-    setHasCompletedEntry(false)
-  }
-
-  const handleSignOut = () => {
-    setCurrentUser(null)
-    setToast({
-      type: 'info',
-      title: 'Signed Out',
-      message: 'You have safely signed out of your campus account.',
-    })
-  }
+  const handleSignOut = useCallback(async () => {
+    try {
+      await signOutAccount()
+    } catch (error) {
+      setToast({ type: 'error', title: 'Sign Out Notice', message: error.message })
+    } finally {
+      setCurrentUser(null)
+      setToast({ type: 'info', title: 'Signed Out', message: 'You have safely signed out of your Rizzolve account.' })
+    }
+  }, [])
 
   const handleAuthSuccess = (userData) => {
     setCurrentUser(userData)
+    setHasCompletedEntry(true)
     setToast({
       type: 'success',
-      title: 'Welcome Back',
-      message: `Logged in as ${userData.fullName}. Campus dashboard ready.`,
+      title: 'Welcome to Rizzolve',
+      message: 'Signed in as ' + userData.fullName + '.',
     })
   }
 
   const handleDeductTokens = (amount) => {
     setCurrentUser((prev) => {
       if (!prev) return prev
-      return {
-        ...prev,
-        tokenBalance: Math.max(0, (prev.tokenBalance || 0) - amount),
-      }
+      return { ...prev, tokenBalance: Math.max(0, (prev.tokenBalance || 0) - amount) }
     })
   }
 
-  // PHASE 1: Complete Cinematic Entry Video (Plays alone, no rings, completely visible, once only)
-  if (!hasCompletedEntry) {
-    return <CinematicEntryVideo onComplete={handleEntryComplete} />
+  if (isPasswordRecovery) {
+    return (
+      <div className="min-h-screen bg-[#090b12] text-[#fef9f8] flex items-center justify-center p-4">
+        <NotificationToast toast={toast} onClose={() => setToast(null)} />
+        <div className="w-full max-w-md">
+          <ForgotPasswordModal
+            isOpen
+            recoveryMode
+            onClose={() => setIsPasswordRecovery(false)}
+            onPasswordUpdated={() => setIsPasswordRecovery(false)}
+            onNotify={setToast}
+          />
+        </div>
+      </div>
+    )
   }
 
-  // PHASE 2: Main Application & Dashboard (Loads after video finishes)
+  if (!hasCompletedEntry) {
+    return <CinematicEntryVideo onComplete={() => setHasCompletedEntry(true)} />
+  }
+
+  if (!authReady) {
+    return (
+      <div className="min-h-screen bg-[#090b12] text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-white/20 border-t-[#ff0c0c] rounded-full animate-spin mx-auto" />
+          <p className="mt-4 text-sm text-white/60">Checking your Rizzolve account...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-[#090b12] text-[#fef9f8] selection:bg-[#ff0c0c] selection:text-white">
-      {/* Toast Notification Container */}
       <NotificationToast toast={toast} onClose={() => setToast(null)} />
-
-      {/* Forgot Password Modal */}
       <ForgotPasswordModal
         isOpen={isForgotModalOpen}
         onClose={() => setIsForgotModalOpen(false)}
-        onNotify={(msg) => setToast(msg)}
+        onNotify={setToast}
       />
 
       {currentUser ? (
-        /* Full Authenticated Student Dashboard */
         <DashboardShell
           currentUser={currentUser}
           onSignOut={handleSignOut}
-          onReplayIntro={handleReplayIntro}
+          onReplayIntro={() => setHasCompletedEntry(false)}
           onDeductTokens={handleDeductTokens}
         />
       ) : (
-        /* Auth Screen if user explicitly signed out */
-        <div className="min-h-screen flex items-center justify-center p-4">
-          <div className="w-full max-w-md">
+        <div className="min-h-screen relative flex items-center justify-center p-4 overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(220,38,38,0.16),transparent_55%)] pointer-events-none" />
+          <div className="relative z-10 w-full max-w-xl">
             <AuthCard
               onAuthSuccess={handleAuthSuccess}
               onOpenForgotPassword={() => setIsForgotModalOpen(true)}
-              onNotify={(msg) => setToast(msg)}
+              onNotify={setToast}
             />
           </div>
         </div>
