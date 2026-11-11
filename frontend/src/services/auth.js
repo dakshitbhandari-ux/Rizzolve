@@ -1,0 +1,189 @@
+const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || '').replace(/\/+$/, '')
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
+const SESSION_KEY = 'rizzolve.auth.session.v1'
+
+export const isAuthConfigured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY)
+
+function getStoredSession() {
+  try {
+    return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null')
+  } catch {
+    return null
+  }
+}
+
+function saveSession(session) {
+  if (!session?.access_token) return
+  const expiresAt = session.expires_at || Math.floor(Date.now() / 1000) + (session.expires_in || 3600)
+  localStorage.setItem(SESSION_KEY, JSON.stringify({
+    access_token: session.access_token,
+    refresh_token: session.refresh_token,
+    expires_at: expiresAt,
+  }))
+}
+
+function clearSession() {
+  localStorage.removeItem(SESSION_KEY)
+}
+
+function authError(payload, status) {
+  const message = payload?.msg || payload?.message || payload?.error_description || payload?.error
+  if (status === 400 && /invalid login credentials/i.test(message || '')) {
+    return new Error('The email or password is incorrect. Please try again.')
+  }
+  if (/email not confirmed/i.test(message || '')) {
+    return new Error('Please verify your email using the confirmation link we sent you.')
+  }
+  if (/user already registered/i.test(message || '')) {
+    return new Error('An account with this email already exists. Sign in instead.')
+  }
+  return new Error(message || 'Authentication failed. Please try again.')
+}
+
+async function authRequest(path, { method = 'POST', body, accessToken } = {}) {
+  if (!isAuthConfigured) {
+    throw new Error('Authentication is not configured yet. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to the Embarko app environment, then redeploy.')
+  }
+
+  const response = await fetch(`${SUPABASE_URL}/auth/v1/${path}`, {
+    method,
+    headers: {
+      apikey: SUPABASE_ANON_KEY,
+      'Content-Type': 'application/json',
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+    },
+    ...(body ? { body: JSON.stringify(body) } : {}),
+  })
+
+  const payload = await response.json().catch(() => ({}))
+  if (!response.ok) throw authError(payload, response.status)
+  return payload
+}
+
+function toAppUser(user) {
+  if (!user) return null
+  const metadata = user.user_metadata || {}
+  const fullName = metadata.full_name || metadata.name || user.email?.split('@')[0] || 'Student'
+  return {
+    id: user.id,
+    fullName,
+    email: user.email || '',
+    studentId: metadata.student_id || '',
+    course: metadata.course || 'Not specified',
+    semester: metadata.semester || 'Not specified',
+    tokenBalance: 50,
+    role: 'student',
+  }
+}
+
+async function fetchCurrentUser(accessToken) {
+  const user = await authRequest('user', { method: 'GET', accessToken })
+  return toAppUser(user)
+}
+
+export async function signInWithEmail(email, password) {
+  const result = await authRequest('token?grant_type=password', {
+    body: { email: email.trim().toLowerCase(), password },
+  })
+  saveSession(result)
+  const user = result.user || await fetchCurrentUser(result.access_token)
+  return toAppUser(user)
+}
+
+export async function signUpWithEmail({ fullName, email, studentId, course, semester, password }) {
+  const result = await authRequest('signup', {
+    body: {
+      email: email.trim().toLowerCase(),
+      password,
+      data: {
+        full_name: fullName.trim(),
+        student_id: studentId.trim(),
+        course,
+        semester,
+      },
+    },
+  })
+
+  if (result.access_token) {
+    saveSession(result)
+    const user = result.user || await fetchCurrentUser(result.access_token)
+    return { user: toAppUser(user), confirmationRequired: false }
+  }
+
+  return { user: null, confirmationRequired: true }
+}
+
+export async function requestPasswordReset(email) {
+  const redirectTo = window.location.origin
+  await authRequest(`recover?redirect_to=${encodeURIComponent(redirectTo)}`, {
+    body: { email: email.trim().toLowerCase() },
+  })
+}
+
+export async function updateAccountPassword(password) {
+  const session = getStoredSession()
+  if (!session?.access_token) throw new Error('Your password-reset session has expired. Request a new reset email.')
+  await authRequest('user', {
+    method: 'PUT',
+    accessToken: session.access_token,
+    body: { password },
+  })
+  clearSession()
+}
+
+export async function signOut() {
+  const session = getStoredSession()
+  try {
+    if (session?.access_token && isAuthConfigured) {
+      await authRequest('logout', { accessToken: session.access_token })
+    }
+  } finally {
+    clearSession()
+  }
+}
+
+export async function restoreAuthSession() {
+  // Supabase sends access tokens back in the URL fragment after email confirmation
+  // and password recovery. Consume them once, then remove them from the address bar.
+  const fragment = new URLSearchParams(window.location.hash.replace(/^#/, ''))
+  const redirectedAccessToken = fragment.get('access_token')
+  if (redirectedAccessToken) {
+    const redirectedSession = {
+      access_token: redirectedAccessToken,
+      refresh_token: fragment.get('refresh_token'),
+      expires_in: Number(fragment.get('expires_in') || 3600),
+    }
+    saveSession(redirectedSession)
+    const recovery = fragment.get('type') === 'recovery'
+    window.history.replaceState({}, document.title, window.location.pathname + window.location.search)
+    if (recovery) return { user: null, recovery: true }
+    return { user: await fetchCurrentUser(redirectedSession.access_token), recovery: false }
+  }
+
+  let session = getStoredSession()
+  if (!session?.access_token) return { user: null, recovery: false }
+
+  if (session.expires_at && session.expires_at <= Math.floor(Date.now() / 1000) + 60) {
+    if (!session.refresh_token) {
+      clearSession()
+      return { user: null, recovery: false }
+    }
+    try {
+      const refreshed = await authRequest('token?grant_type=refresh_token', {
+        body: { refresh_token: session.refresh_token },
+      })
+      saveSession(refreshed)
+      session = getStoredSession()
+    } catch {
+      clearSession()
+      return { user: null, recovery: false }
+    }
+  }
+
+  try {
+    return { user: await fetchCurrentUser(session.access_token), recovery: false }
+  } catch {
+    clearSession()
+    return { user: null, recovery: false }
+  }
+}
