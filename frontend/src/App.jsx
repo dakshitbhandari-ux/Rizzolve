@@ -17,11 +17,12 @@ export default function App() {
   useEffect(() => {
     let active = true
     restoreAuthSession()
-      .then(({ user, recovery }) => {
+      .then(({ user, recovery, authError }) => {
         if (!active) return
         setCurrentUser(user)
         if (user) setHasCompletedEntry(true)
         setIsPasswordRecovery(Boolean(recovery))
+        if (authError) setToast({ type: 'error', title: 'Email Link Expired', message: authError })
       })
       .catch((error) => {
         if (active) {
