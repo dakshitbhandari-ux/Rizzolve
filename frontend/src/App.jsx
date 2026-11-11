@@ -20,6 +20,7 @@ export default function App() {
       .then(({ user, recovery }) => {
         if (!active) return
         setCurrentUser(user)
+        if (user) setHasCompletedEntry(true)
         setIsPasswordRecovery(Boolean(recovery))
       })
       .catch((error) => {
@@ -61,6 +62,17 @@ export default function App() {
     })
   }
 
+  if (!authReady) {
+    return (
+      <div className="min-h-screen bg-[#090b12] text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-white/20 border-t-[#ff0c0c] rounded-full animate-spin mx-auto" />
+          <p className="mt-4 text-sm text-white/60">Checking your Rizzolve account...</p>
+        </div>
+      </div>
+    )
+  }
+
   if (isPasswordRecovery) {
     return (
       <div className="min-h-screen bg-[#090b12] text-[#fef9f8] flex items-center justify-center p-4">
@@ -78,49 +90,40 @@ export default function App() {
     )
   }
 
-  if (!hasCompletedEntry) {
-    return <CinematicEntryVideo onComplete={() => setHasCompletedEntry(true)} />
-  }
-
-  if (!authReady) {
+  if (!currentUser) {
     return (
-      <div className="min-h-screen bg-[#090b12] text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-white/20 border-t-[#ff0c0c] rounded-full animate-spin mx-auto" />
-          <p className="mt-4 text-sm text-white/60">Checking your Rizzolve account...</p>
+      <div className="min-h-screen relative flex items-center justify-center p-4 overflow-hidden bg-[#090b12]">
+        <NotificationToast toast={toast} onClose={() => setToast(null)} />
+        <ForgotPasswordModal
+          isOpen={isForgotModalOpen}
+          onClose={() => setIsForgotModalOpen(false)}
+          onNotify={setToast}
+        />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(220,38,38,0.16),transparent_55%)] pointer-events-none" />
+        <div className="relative z-10 w-full max-w-xl">
+          <AuthCard
+            onAuthSuccess={handleAuthSuccess}
+            onOpenForgotPassword={() => setIsForgotModalOpen(true)}
+            onNotify={setToast}
+          />
         </div>
       </div>
     )
   }
 
+  if (!hasCompletedEntry) {
+    return <CinematicEntryVideo onComplete={() => setHasCompletedEntry(true)} />
+  }
+
   return (
     <div className="min-h-screen bg-[#090b12] text-[#fef9f8] selection:bg-[#ff0c0c] selection:text-white">
       <NotificationToast toast={toast} onClose={() => setToast(null)} />
-      <ForgotPasswordModal
-        isOpen={isForgotModalOpen}
-        onClose={() => setIsForgotModalOpen(false)}
-        onNotify={setToast}
+      <DashboardShell
+        currentUser={currentUser}
+        onSignOut={handleSignOut}
+        onReplayIntro={() => setHasCompletedEntry(false)}
+        onDeductTokens={handleDeductTokens}
       />
-
-      {currentUser ? (
-        <DashboardShell
-          currentUser={currentUser}
-          onSignOut={handleSignOut}
-          onReplayIntro={() => setHasCompletedEntry(false)}
-          onDeductTokens={handleDeductTokens}
-        />
-      ) : (
-        <div className="min-h-screen relative flex items-center justify-center p-4 overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(220,38,38,0.16),transparent_55%)] pointer-events-none" />
-          <div className="relative z-10 w-full max-w-xl">
-            <AuthCard
-              onAuthSuccess={handleAuthSuccess}
-              onOpenForgotPassword={() => setIsForgotModalOpen(true)}
-              onNotify={setToast}
-            />
-          </div>
-        </div>
-      )}
     </div>
   )
 }
