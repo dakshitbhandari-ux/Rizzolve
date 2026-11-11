@@ -1,8 +1,33 @@
-const SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || '').replace(/\/+$/, '')
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
+const BUILD_SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || '').replace(/\\/+$/, '')
+const BUILD_SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
 const SESSION_KEY = 'rizzolve.auth.session.v1'
 
-export const isAuthConfigured = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY)
+let runtimeConfigPromise = null
+
+async function getSupabaseConfig() {
+  if (BUILD_SUPABASE_URL && BUILD_SUPABASE_ANON_KEY) {
+    return { url: BUILD_SUPABASE_URL, anonKey: BUILD_SUPABASE_ANON_KEY }
+  }
+
+  if (!runtimeConfigPromise) {
+    runtimeConfigPromise = fetch('/runtime-config.json', { cache: 'no-store' })
+      .then(async (response) => {
+        if (!response.ok) throw new Error('Runtime configuration endpoint returned HTTP ' + response.status)
+        const config = await response.json()
+        return {
+          url: (config.supabaseUrl || '').replace(/\\/+$/, ''),
+          anonKey: config.supabaseAnonKey || '',
+        }
+      })
+      .catch(() => ({ url: '', anonKey: '' }))
+  }
+
+  const config = await runtimeConfigPromise
+  if (!config.url || !config.anonKey) {
+    throw new Error('Supabase settings are not reaching the running app. Confirm VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are set in Embarko, then restart/redeploy RIZZOLVE.')
+  }
+  return config
+}
 
 function getStoredSession() {
   try {
@@ -45,14 +70,11 @@ function authError(payload, status) {
 }
 
 async function authRequest(path, { method = 'POST', body, accessToken } = {}) {
-  if (!isAuthConfigured) {
-    throw new Error('Authentication is not configured yet. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to the Embarko app environment, then redeploy.')
-  }
-
-  const response = await fetch(`${SUPABASE_URL}/auth/v1/${path}`, {
+  const config = await getSupabaseConfig()
+  const response = await fetch(`${config.url}/auth/v1/${path}`, {
     method,
     headers: {
-      apikey: SUPABASE_ANON_KEY,
+      apikey: config.anonKey,
       'Content-Type': 'application/json',
       ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
     },
@@ -66,13 +88,14 @@ async function authRequest(path, { method = 'POST', body, accessToken } = {}) {
 
 async function fetchUserProfile(accessToken, userId) {
   try {
+    const config = await getSupabaseConfig()
     const query = new URLSearchParams({
       select: 'name,email,student_id,course,semester,reputation',
       id: 'eq.' + userId,
     })
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/profiles?${query.toString()}`, {
+    const response = await fetch(`${config.url}/rest/v1/profiles?${query.toString()}`, {
       headers: {
-        apikey: SUPABASE_ANON_KEY,
+        apikey: config.anonKey,
         Authorization: `Bearer ${accessToken}`,
       },
     })
@@ -115,7 +138,8 @@ export async function signInWithEmail(email, password, rememberMe = true) {
 }
 
 export async function signUpWithEmail({ fullName, email, studentId, course, semester, password }) {
-  const result = await authRequest('signup', {
+  const redirectTo = window.location.origin
+  const result = await authRequest(`signup?redirect_to=${encodeURIComponent(redirectTo)}`, {
     body: {
       email: email.trim().toLowerCase(),
       password,
@@ -158,7 +182,7 @@ export async function updateAccountPassword(password) {
 export async function signOut() {
   const session = getStoredSession()
   try {
-    if (session?.access_token && isAuthConfigured) {
+    if (session?.access_token) {
       await authRequest('logout', { accessToken: session.access_token })
     }
   } finally {
@@ -167,8 +191,6 @@ export async function signOut() {
 }
 
 export async function restoreAuthSession() {
-  // Supabase sends access tokens back in the URL fragment after email confirmation
-  // and password recovery. Consume them once, then remove them from the address bar.
   const fragment = new URLSearchParams(window.location.hash.replace(/^#/, ''))
   const redirectedAccessToken = fragment.get('access_token')
   if (redirectedAccessToken) {
