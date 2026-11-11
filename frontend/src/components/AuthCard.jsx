@@ -98,7 +98,7 @@ export default function AuthCard({ onAuthSuccess, onOpenForgotPassword, onNotify
         return
       }
       try { confetti({ particleCount: 80, spread: 75, origin: { y: 0.6 }, colors: ['#ff0c0c', '#ffffff', '#ff0101'] }) } catch {}
-      onNotify({ type: 'success', title: 'Account Created', message: 'Your individual Rizzolve account is ready. Welcome bonus: 50 tokens.' })
+      onNotify({ type: 'success', title: 'Account Created', message: 'Your individual Rizzolve account is ready.' })
       onAuthSuccess(result.user)
     } catch (error) {
       setErrorMsg(error.message || 'Unable to create your account. Please try again.')
@@ -497,9 +497,6 @@ export default function AuthCard({ onAuthSuccess, onOpenForgotPassword, onNotify
               ) : (
                 <>
                   <span>Create Account</span>
-                  <span className="px-2 py-0.5 text-[11px] font-bold rounded-md bg-white/20 text-white">
-                    +50 Tokens
-                  </span>
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
