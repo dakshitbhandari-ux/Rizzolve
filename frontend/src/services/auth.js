@@ -1,4 +1,10 @@
-const BUILD_SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL || '').replace(/\\/+$/, '')
+function stripTrailingSlashes(value) {
+  let result = value || ''
+  while (result.endsWith('/')) result = result.slice(0, -1)
+  return result
+}
+
+const BUILD_SUPABASE_URL = stripTrailingSlashes(import.meta.env.VITE_SUPABASE_URL || '')
 const BUILD_SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
 const SESSION_KEY = 'rizzolve.auth.session.v1'
 
@@ -15,7 +21,7 @@ async function getSupabaseConfig() {
         if (!response.ok) throw new Error('Runtime configuration endpoint returned HTTP ' + response.status)
         const config = await response.json()
         return {
-          url: (config.supabaseUrl || '').replace(/\\/+$/, ''),
+          url: stripTrailingSlashes(config.supabaseUrl || ''),
           anonKey: config.supabaseAnonKey || '',
         }
       })
