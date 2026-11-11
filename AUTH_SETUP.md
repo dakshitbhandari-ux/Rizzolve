@@ -19,14 +19,15 @@ A sample file is available at `frontend/.env.example`.
 
 ### Database setup
 
-Apply migrations `001_initial_schema.sql` through `005_individual_accounts.sql` in order to the Supabase project. Migration 005:
+Apply migrations `001_initial_schema.sql` through `008_private_tenant_helper_and_search.sql` in order to the Supabase project. Migration 005:
 
 - Adds student ID, course and semester to each profile.
 - Enforces unique student IDs within a campus.
 - Provisions a profile for each new Supabase Auth user.
 - Provides a default Rizzolve Open Campus tenant until institution domains are configured.
+- Restricts internal trigger/function permissions, stores the tenant lookup helper in a non-exposed `private` schema, moves `pg_trgm` to `extensions`, and ensures doubt search fails closed.
 
-For an existing Supabase project, apply only the migrations that have not already been run. Do not rerun the earlier non-idempotent schema migrations.
+For an existing Supabase project, apply only the migrations that have not already been run. Do not rerun the earlier non-idempotent schema migrations. Migrations `006`–`008` harden permissions and close an unscoped-search edge case.
 
 ### User flow
 
