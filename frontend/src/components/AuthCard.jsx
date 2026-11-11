@@ -15,9 +15,9 @@ import {
   HelpCircle,
 } from 'lucide-react'
 import confetti from 'canvas-confetti'
-import { signInWithEmail, signUpWithEmail } from '../services/auth'
+import { signInWithEmail, signUpWithEmail, resendSignupConfirmation } from '../services/auth'
 
-export default function AuthCard({ onAuthSuccess, onOpenForgotPassword, onNotify }) {
+export default function AuthCard({ onAuthSuccess, onOpenForgotPassword, onNotify, showResendConfirmation: initialShowResendConfirmation = false }) {
   // 'login' or 'register'
   const [authMode, setAuthMode] = useState('login')
 
@@ -29,6 +29,7 @@ export default function AuthCard({ onAuthSuccess, onOpenForgotPassword, onNotify
   // Loading state
   const [isLoading, setIsLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
+  const [showResendConfirmation, setShowResendConfirmation] = useState(initialShowResendConfirmation)
 
   // Login form state
   const [loginEmail, setLoginEmail] = useState('')
@@ -74,6 +75,7 @@ export default function AuthCard({ onAuthSuccess, onOpenForgotPassword, onNotify
       onAuthSuccess(user)
     } catch (error) {
       setErrorMsg(error.message || 'Unable to sign in. Please try again.')
+      if (/email not confirmed/i.test(error.message || '')) setShowResendConfirmation(true)
     } finally { setIsLoading(false) }
   }
 
@@ -92,6 +94,7 @@ export default function AuthCard({ onAuthSuccess, onOpenForgotPassword, onNotify
       const result = await signUpWithEmail({ fullName: regFullName, email: regEmail, studentId: regStudentId, course: regCourse, semester: regSemester, password: regPassword })
       if (result.confirmationRequired) {
         setAuthMode('login')
+        setShowResendConfirmation(true)
         setLoginEmail(regEmail.trim())
         setLoginPassword('')
         onNotify({ type: 'success', title: 'Verify Your Email', message: 'Your account was created. Open the confirmation link sent to your email, then sign in.' })
@@ -264,6 +267,34 @@ export default function AuthCard({ onAuthSuccess, onOpenForgotPassword, onNotify
                 </>
               )}
             </button>
+            {showResendConfirmation && (
+              <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-white/70">
+                <p className="mb-2">Your confirmation link may have expired or already been used. Enter your signup email above and request a fresh link.</p>
+                <button
+                  type="button"
+                  disabled={isLoading || !loginEmail.trim()}
+                  onClick={async () => {
+                    setErrorMsg('')
+                    setIsLoading(true)
+                    try {
+                      await resendSignupConfirmation(loginEmail)
+                      onNotify({
+                        type: 'success',
+                        title: 'New Confirmation Email Sent',
+                        message: 'Check your inbox and open the newest RIZZOLVE verification email. Older links will not work.',
+                      })
+                    } catch (error) {
+                      setErrorMsg(error.message || 'Unable to resend the confirmation email.')
+                    } finally {
+                      setIsLoading(false)
+                    }
+                  }}
+                  className="font-semibold text-[#ff6b6b] hover:text-white disabled:opacity-40 underline underline-offset-2"
+                >
+                  Resend confirmation email
+                </button>
+              </div>
+            )}
           </form>
         )}
 
