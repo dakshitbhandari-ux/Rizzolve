@@ -7,8 +7,19 @@ function stripTrailingSlashes(value) {
 const BUILD_SUPABASE_URL = stripTrailingSlashes(import.meta.env.VITE_SUPABASE_URL || '')
 const BUILD_SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
 const SESSION_KEY = 'rizzolve.auth.session.v1'
+const PRODUCTION_AUTH_REDIRECT = 'https://rizzolve.embarko.app'
 
 let runtimeConfigPromise = null
+
+function getAuthRedirectUrl() {
+  const configured = stripTrailingSlashes(import.meta.env.VITE_AUTH_REDIRECT_URL || '')
+  if (configured) return configured
+  // Always use the public production callback when testing from localhost.
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return PRODUCTION_AUTH_REDIRECT
+  }
+  return window.location.origin
+}
 
 async function getSupabaseConfig() {
   if (BUILD_SUPABASE_URL && BUILD_SUPABASE_ANON_KEY) {
@@ -144,7 +155,7 @@ export async function signInWithEmail(email, password, rememberMe = true) {
 }
 
 export async function signUpWithEmail({ fullName, email, studentId, course, semester, password }) {
-  const redirectTo = window.location.origin
+  const redirectTo = getAuthRedirectUrl()
   const result = await authRequest(`signup?redirect_to=${encodeURIComponent(redirectTo)}`, {
     body: {
       email: email.trim().toLowerCase(),
@@ -167,8 +178,15 @@ export async function signUpWithEmail({ fullName, email, studentId, course, seme
   return { user: null, confirmationRequired: true }
 }
 
+export async function resendSignupConfirmation(email) {
+  const redirectTo = getAuthRedirectUrl()
+  await authRequest(`resend?redirect_to=${encodeURIComponent(redirectTo)}`, {
+    body: { type: 'signup', email: email.trim().toLowerCase() },
+  })
+}
+
 export async function requestPasswordReset(email) {
-  const redirectTo = window.location.origin
+  const redirectTo = getAuthRedirectUrl()
   await authRequest(`recover?redirect_to=${encodeURIComponent(redirectTo)}`, {
     body: { email: email.trim().toLowerCase() },
   })
@@ -199,6 +217,15 @@ export async function signOut() {
 export async function restoreAuthSession() {
   const fragment = new URLSearchParams(window.location.hash.replace(/^#/, ''))
   const redirectedAccessToken = fragment.get('access_token')
+  if (!redirectedAccessToken && (fragment.get('error') || fragment.get('error_code'))) {
+    const errorCode = fragment.get('error_code') || ''
+    const description = fragment.get('error_description') || ''
+    const message = errorCode === 'otp_expired'
+      ? 'This verification link has expired or has already been used. Return to RIZZOLVE, enter your email, and request a fresh confirmation email.'
+      : (description.replace(/\\+/g, ' ') || 'Email verification could not be completed. Request a fresh confirmation email and try again.')
+    window.history.replaceState({}, document.title, window.location.pathname + window.location.search)
+    return { user: null, recovery: false, authError: message }
+  }
   if (redirectedAccessToken) {
     const redirectedSession = {
       access_token: redirectedAccessToken,
